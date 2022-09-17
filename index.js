@@ -1,14 +1,17 @@
 require('dotenv').config();
 const express = require('express');
-
 const app = express();
+const cors = require('cors');
+const bodyParser = require('body-parser');
+const usersRouter = require('./src/controllers/users');
 
 const db = require('./src/db/db');
 db();
 
-app.get('/', (req, res) => {
-  res.json('this is the root route')
-})
+app.use(cors());
+app.use(bodyParser.json({}));
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use('/api/users', usersRouter);
 
 const port = process.env.PORT || 5000;
 
