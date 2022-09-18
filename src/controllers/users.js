@@ -3,13 +3,13 @@ const usersRouter = require('express').Router();
 const User = require('../models/user');
 
 const generateToken = require('../config/generateToken');
-const emailSender = require('../config/sendEmail');
+const { sendVerificationEmail, sendForgotPasswordEmail } = require('../config/sendEmail');
 
 // register user
-usersRouter.post('/register', async (req, res) => {
-  const { username, email, password } = await req.body;
+usersRouter.post('/', async (req, res) => {
+  const { username, email, password, passwordConfirmation } = await req.body;
   
-  if (!username || !email || !password) {
+  if (!username || !email || !password || !passwordConfirmation) {
     return res.status(400).json({ success: false, message: 'Please fill in all fields.' });
   }
 
@@ -20,6 +20,10 @@ usersRouter.post('/register', async (req, res) => {
 
   if (password.length < 8) {
     return res.status(400).json({ success: false, message: 'Password should be a minimum of 8 characters.' });
+  }
+
+  if (password !== passwordConfirmation) {
+    return res.status(400).json({ success: false, message: 'Passwords must match.' })
   }
 
   const existingUsername = await User.findOne({ username });
@@ -47,10 +51,11 @@ usersRouter.post('/register', async (req, res) => {
     const token = generateToken({ email: newUser.email });
 
     // link to verify new account
-    const verifyLink = `http://${req.hostname}:5000/api/email/verify?token=${token}`;
+    const port = req.hostname === 'localhost' ? ':5000' : ''
+    const verifyLink = `http://${req.hostname}${port}/api/users/verify-token?token=${token}`;
 
     // send verification email
-    const sendEmail = await emailSender(newUser.email, verifyLink);
+    const sendEmail = await sendVerificationEmail(newUser.email, verifyLink);
 
     if (sendEmail) {
       return res.status(201).json({success: true, message: "Registration successfull." });
@@ -59,5 +64,48 @@ usersRouter.post('/register', async (req, res) => {
     }
   });
 });
+
+usersRouter.post('/forgot-password', async (req, res) => {
+  const { email } = req.body;
+
+  if (!email) {
+    return res.status(400).json({ success: false, message: "Please enter valid email address." })
+  }
+
+  // validate email
+  if (!/^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/.test(email)) {
+    return res.status(400).json({ success: false, message: "Please enter valid email address." })
+  }
+
+  const existingUser = await User.findOne({ email });
+
+  if (!existingUser) {
+    return res.status(403).json({ success: false, message: 'User not found.' });
+  }
+
+
+  const token = generateToken({ email: existingUser.email }, '1d');
+
+  // link to reset password
+  const port = req.hostname === 'localhost' ? ':5000' : ''
+  const verifyLink = `http://${req.hostname}${port}/api/users/reset-password?token=${token}`;
+
+  // send password reset email
+  const sendEmail = await sendForgotPasswordEmail(email, verifyLink);
+
+  if (sendEmail) {
+    return res.status(201).json({success: true, message: "Email Sent." });
+  } else {
+    return res.status(201).json({success: true, message: "Error in sending email." });
+  }
+});
+
+usersRouter.get('/verify-token', async (req, res) => {
+
+})
+
+usersRouter.post('/reset-password', async (req, res) => {
+
+})
 
 module.exports = usersRouter;
