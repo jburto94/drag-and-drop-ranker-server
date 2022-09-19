@@ -5,7 +5,8 @@ const cors = require('cors');
 const bodyParser = require('body-parser');
 const usersRouter = require('./src/controllers/users');
 const loginRouter = require('./src/controllers/login');
-const tokenRouter = require('./src/controllers/token');
+const verifyTokenRouter = require('./src/controllers/verifyToken');
+const verifyEmailRouter = require('./src/controllers/verifyEmail');
 
 const db = require('./src/db/db');
 db();
@@ -15,7 +16,8 @@ app.use(bodyParser.json({}));
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use('/api/users', usersRouter);
 app.use('/api/login', loginRouter);
-app.use('/api/token', tokenRouter);
+app.use('/api/token', verifyTokenRouter);
+app.use('/api/email', verifyEmailRouter);
 
 const port = process.env.PORT || 5000;
 

@@ -52,7 +52,7 @@ usersRouter.post('/', async (req, res) => {
 
     // link to verify new account
     const port = req.hostname === 'localhost' ? ':5000' : ''
-    const verifyLink = `http://${req.hostname}${port}/api/token/verify-token?token=${token}`;
+    const verifyLink = `http://${req.hostname}${port}/api/email/verify?token=${token}`;
 
     // send verification email
     const sendEmail = await sendVerificationEmail(newUser.email, verifyLink);

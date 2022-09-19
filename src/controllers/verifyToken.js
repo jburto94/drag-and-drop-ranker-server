@@ -1,9 +1,9 @@
 const jwt = require('jsonwebtoken');
-const tokenRouter = require('express').Router();
+const verifyTokenRouter = require('express').Router();
 const User = require('../models/user');
 require('dotenv').config();
 
-tokenRouter.get('/verify-token', async (req, res) => {
+verifyTokenRouter.get('/verify-token', async (req, res) => {
   const { token } = req.query;
 
   if (!token) {
@@ -26,4 +26,4 @@ tokenRouter.get('/verify-token', async (req, res) => {
   return res.status(200).json({ success: true, data: decodedToken.email });
 });
 
-module.exports = tokenRouter;
+module.exports = verifyTokenRouter;
