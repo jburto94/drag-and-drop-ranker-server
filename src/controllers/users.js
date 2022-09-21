@@ -51,8 +51,8 @@ usersRouter.post('/', async (req, res) => {
     const token = generateToken({ email: newUser.email });
 
     // link to verify new account
-    const port = req.hostname === 'localhost' ? ':5000' : ''
-    const verifyLink = `http://${req.hostname}${port}/api/email/verify?token=${token}`;
+    const port = req.hostname === 'localhost' ? ':3000' : ''
+    const verifyLink = `http://${req.hostname}${port}/verify-email?token=${token}`;
 
     // send verification email
     const sendEmail = await sendVerificationEmail(newUser.email, verifyLink);
@@ -87,8 +87,8 @@ usersRouter.post('/forgot-password', async (req, res) => {
   const token = generateToken({ email: existingUser.email }, '1d');
 
   // link to reset password
-  const port = req.hostname === 'localhost' ? ':5000' : ''
-  const verifyLink = `http://${req.hostname}${port}/api/token/verify-token?token=${token}`;
+  const port = req.hostname === 'localhost' ? ':3000' : ''
+  const verifyLink = `http://${req.hostname}${port}/reset-password?token=${token}`;
 
   // send password reset email
   const sendEmail = await sendForgotPasswordEmail(email, verifyLink);
@@ -100,7 +100,7 @@ usersRouter.post('/forgot-password', async (req, res) => {
   }
 });
 
-usersRouter.post('/reset-password', async (req, res) => {
+usersRouter.put('/reset-password', async (req, res) => {
   const { email, password, passwordConfirmation } = req.body;
   
   if (!email || !password || !passwordConfirmation) {

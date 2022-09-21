@@ -16,15 +16,19 @@ loginRouter.post('/', async (req, res) => {
     return res.status(400).json({ success: false, message: 'Invalid email and/or password.' });
   }
 
+  if (!existingUser.verified) {
+    return res.status(403).json({ success: false, message: 'User has not been verifed. Please check your email to verify.'})
+  }
+
   const matchPassword = await bcrypt.compare(password, existingUser.passwordHash);
 
   if (!matchPassword) {
     return res.status(400).json({ success: false, message: 'Invalid email and/or password.' });
   }
 
-  const tokenExpiration = remember ? '60d' : '7d';
+  const tokenExpiration = remember === 'true' ? '90d' : '7d';
 
-  const token = await generateToken({ email: existingUser.email, _id: existingUser._id }, tokenExpiration);
+  const token = await generateToken({ email: existingUser.email, username: existingUser.username, verified: existingUser.verified, _id: existingUser._id }, tokenExpiration);
   
   return res.status(200).json({ success: true, token, message: 'You have successfully logged in.' });
 });
