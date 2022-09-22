@@ -6,10 +6,15 @@ const getCurrentUser = async token => {
   try {
     decodedToken = jwt.verify(token, process.env.JWT_SECRET);
   } catch (err) {
-    return res.status(401).json({ success: false, message: 'Invalid token.', error: err });
+    return false;
   }
 
-  return await User.findOne({id: decodedToken.id});
+  try {
+    const currentUser = await User.findOne({id: decodedToken.id});
+    return currentUser;
+  } catch (err) {
+    return false;
+  }
 }
 
 module.exports = getCurrentUser;
