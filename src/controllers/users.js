@@ -51,7 +51,7 @@ usersRouter.post('/', async (req, res) => {
     const token = generateToken({ email: newUser.email });
 
     // link to verify new account
-    const verifyLink = `${process.env.SERVER_URI}/verify-email?token=${token}`;
+    const verifyLink = `${process.env.CLIENT_URI}/verify-email?token=${token}`;
 
     // send verification email
     const sendEmail = await sendVerificationEmail(newUser.email, verifyLink);
@@ -87,7 +87,7 @@ usersRouter.post('/forgot-password', async (req, res) => {
 
   // link to reset password
   const port = req.hostname === 'localhost' ? ':3000' : ''
-  const verifyLink = `${process.env.SERVER_URI}/reset-password?token=${token}`;
+  const verifyLink = `${process.env.CLIENT_URI}/reset-password?token=${token}`;
 
   // send password reset email
   const sendEmail = await sendForgotPasswordEmail(email, verifyLink);
