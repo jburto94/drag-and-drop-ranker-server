@@ -51,7 +51,6 @@ usersRouter.post('/', async (req, res) => {
     const token = generateToken({ email: newUser.email });
 
     // link to verify new account
-    const port = req.hostname === 'localhost' ? ':3000' : ''
     const verifyLink = `http://${req.hostname}${port}/verify-email?token=${token}`;
 
     // send verification email

@@ -4,6 +4,7 @@ const nodemailer = require('nodemailer');
 module.exports = {
   sendVerificationEmail: async (userAddress, link) => {
     let success = true;
+    console.log(process.env.MAIL_PASSWORD)
     try {
       const transporter = await nodemailer.createTransport({
         host: "smtp.gmail.com",
