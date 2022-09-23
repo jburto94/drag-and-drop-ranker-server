@@ -12,7 +12,9 @@ const listsRouter = require('./src/controllers/lists');
 const db = require('./src/db/db');
 db();
 
-app.use(cors());
+app.use(cors({
+  origin: 'https://drag-and-drop.jakeburton.dev'
+}));
 app.use(bodyParser.json({}));
 app.use(bodyParser.urlencoded({ extended: true }));
 
