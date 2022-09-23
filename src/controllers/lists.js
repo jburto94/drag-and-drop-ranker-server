@@ -1,19 +1,21 @@
 const listsRouter = require('express').Router();
 const List = require('../models/list');
-const User = require('../models/user');
 const getCurrentUser = require('../helpers/getCurrentUser');
+const ObjectId = require('mongodb').ObjectID;
 
 // Get all current user's lists
 listsRouter.get('/', async (req, res) => {
   const token = req.headers.authorization.split(' ')[1];
+  console.log(token);
 
   const currentUser = await getCurrentUser(token);
+  console.log(currentUser);
 
   if (!currentUser) {
     return res.status(404).json({ success: false, message: "User not found" });
   }
 
-  const lists = await List.find({ author: currentUser.id });
+  const lists = await List.find({ author: ObjectId(currentUser.id) });
 
   return res.json({ listData: lists })
 });
@@ -21,6 +23,8 @@ listsRouter.get('/', async (req, res) => {
 // Create new list
 listsRouter.post('/', async (req, res) => {
   const { list, title } = req.body;
+  
+  // Get token from authorization headers
   const token = req.headers.authorization.split(' ')[1];
 
   const currentUser = await getCurrentUser(token);
@@ -33,11 +37,12 @@ listsRouter.post('/', async (req, res) => {
     return res.status(404).json({ success: false, message: "User not found" });
   }
 
+  // Populate array of objects from list items
   const listObj = list.map(item => new Object({ text: item }));
 
   const newList = new List({
     items: listObj,
-    title,
+    title: title ? title : 'Untitled List',
     author: currentUser.id
   });
 
@@ -46,9 +51,11 @@ listsRouter.post('/', async (req, res) => {
   }
 });
 
-// Look up singular list by :id
+// Get up single list by :id
 listsRouter.get('/:id', async (req, res) => {
   const { id } = req.params;
+  
+  // Get token from authorization headers
   const token = req.headers.authorization.split(' ')[1];
 
   const currentUser = await getCurrentUser(token);
@@ -66,14 +73,17 @@ listsRouter.get('/:id', async (req, res) => {
   }
 });
 
+//  Update List by :id
 listsRouter.put('/:id', async (req, res) => {
+  console.log(req.body);
   const { id } = req.params;
   const { list, title } = req.body;
+  console.log('ID', id);
+
+  // Get token from authorization headers
   const token = req.headers.authorization.split(' ')[1];
 
-  if (!title) {
-    title = 'Untitled List';
-  }
+  let updatedTitle = title ? title : 'Untitled List';
 
   const currentUser = await getCurrentUser(token);
   
@@ -85,29 +95,34 @@ listsRouter.put('/:id', async (req, res) => {
     return res.status(404).json({ success: false, message: "User not found" });
   }
 
-  const items = list.map(item => new Object({ text: item }));
+  // Populate array of objects from list items
+  const items = list.map(item => new Object({ text: item }))
 
   try {
     const currentList = await List.findById(id);
+    
     if (currentUser.id !== currentList.author.valueOf()) {
       return res.status(401).json({ success: false, message: 'You are not authorized to perform that action.' });
     }
 
-    const updatedList = await List.findByIdAndUpdate(id, { title, items });
+    const updatedList = await List.findByIdAndUpdate(id, { title: updatedTitle, items });
     return res.status(200).json({ success: true, message: 'List has been successfully updated.' });
   } catch (err) {
-    return res.status(404).json({ success: false, message: 'List not found' });
+    return res.status(404).json({ success: false, message: 'Something went wrong. Unable to save list.' });
   }
 });
 
-// Delete List
+// Delete list by :id
 listsRouter.delete('/:id', async (req, res) => {
   const { id } = req.params;
+
+  // Get token from authorization headers
   const token = req.headers.authorization.split(' ')[1];
 
   const currentUser = await getCurrentUser(token);
   
   try {
+    // 
     const currentList = await List.findById(id);
     if (currentUser.id !== currentList.author.valueOf()) {
       return res.status(401).json({ success: false, message: 'You are not authorized to perform that action.' });

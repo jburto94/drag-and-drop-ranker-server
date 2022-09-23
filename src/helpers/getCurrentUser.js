@@ -9,8 +9,10 @@ const getCurrentUser = async token => {
     return false;
   }
 
+  console.log(decodedToken);
+
   try {
-    const currentUser = await User.findOne({id: decodedToken.id});
+    const currentUser = await User.findById(decodedToken._id);
     return currentUser;
   } catch (err) {
     return false;

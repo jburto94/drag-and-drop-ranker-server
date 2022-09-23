@@ -10,7 +10,7 @@ loginRouter.post('/', async (req, res) => {
     return res.status(400).json({ success: false, message: 'Please fill in all form fields.' });
   }
 
-  const existingUser = await User.findOne({ email });
+  const existingUser = await User.findOne({ email: email });
 
   if (!existingUser) {
     return res.status(400).json({ success: false, message: 'Invalid email and/or password.' });
