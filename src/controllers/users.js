@@ -14,7 +14,7 @@ usersRouter.post('/', async (req, res) => {
   }
 
   // validate email
-  if (!/^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/.test(email)) {
+  if (!email.match(/^\w+@[a-zA-Z_]+?\.[a-zA-Z]{2,3}$/)) {
     return res.status(400).json({ success: false, message: "Please enter valid email address." })
   }
 
@@ -73,7 +73,7 @@ usersRouter.post('/forgot-password', async (req, res) => {
   }
 
   // validate email
-  if (!/^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/.test(email)) {
+  if (!email.match(/^\w+@[a-zA-Z_]+?\.[a-zA-Z]{2,3}$/)) {
     return res.status(400).json({ success: false, message: "Please enter valid email address." })
   }
 

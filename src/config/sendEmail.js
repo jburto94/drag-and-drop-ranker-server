@@ -16,14 +16,13 @@ module.exports = {
       });
     
       const info = await transporter.sendMail({
-        from: `"Drag & Drop Ranker" <${process.env.MAIL_USER}>`,
+        from: `"Drag & Drop List Ranker" <${process.env.MAIL_USER}>`,
         to: userAddress,
         subject: "Verify Email Address",
         html: `Please verify your email by clicking <a href='${link}'>here</a>.<br>
         This link will only be valid for 7 days.`,
       });
     } catch (error) {
-      console.log(error);
       success = false;
     }
 
@@ -51,7 +50,6 @@ module.exports = {
         This link will only be valid for 24hrs.`,
       });
     } catch (error) {
-      console.log(error);
       success = false;
     }
 

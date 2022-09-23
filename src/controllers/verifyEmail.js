@@ -5,7 +5,6 @@ require('dotenv').config();
 
 verifyEmailRouter.get('/verify', async (req, res) => {
   const { token } = req.query;
-  console.log(typeof token, token)
 
   if (!token) {
     return res.status(404).json({ success: false, message: 'Invalid token.' });

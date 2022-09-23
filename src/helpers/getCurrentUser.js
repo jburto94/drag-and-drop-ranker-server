@@ -9,8 +9,6 @@ const getCurrentUser = async token => {
     return false;
   }
 
-  console.log(decodedToken);
-
   try {
     const currentUser = await User.findById(decodedToken._id);
     return currentUser;

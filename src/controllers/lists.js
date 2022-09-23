@@ -6,16 +6,14 @@ const ObjectId = require('mongodb').ObjectID;
 // Get all current user's lists
 listsRouter.get('/', async (req, res) => {
   const token = req.headers.authorization.split(' ')[1];
-  console.log(token);
 
   const currentUser = await getCurrentUser(token);
-  console.log(currentUser);
 
   if (!currentUser) {
     return res.status(404).json({ success: false, message: "User not found" });
   }
 
-  const lists = await List.find({ author: ObjectId(currentUser.id) });
+  const lists = await List.find({ author: currentUser.id });
 
   return res.json({ listData: lists })
 });
@@ -75,10 +73,8 @@ listsRouter.get('/:id', async (req, res) => {
 
 //  Update List by :id
 listsRouter.put('/:id', async (req, res) => {
-  console.log(req.body);
   const { id } = req.params;
   const { list, title } = req.body;
-  console.log('ID', id);
 
   // Get token from authorization headers
   const token = req.headers.authorization.split(' ')[1];
