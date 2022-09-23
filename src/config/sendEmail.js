@@ -23,6 +23,7 @@ module.exports = {
         This link will only be valid for 7 days.`,
       });
     } catch (error) {
+      console.log(error);
       success = false;
     }
 
