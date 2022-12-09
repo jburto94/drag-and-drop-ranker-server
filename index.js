@@ -9,6 +9,12 @@ const verifyEmailRouter = require('./src/controllers/verifyEmail');
 const listsRouter = require('./src/controllers/lists');
 const app = express();
 
+const corsOptions = {
+  origin: '*', 
+  credentials: true,
+  optionSuccessStatus: 200,
+}
+
 app.use(cors());
 app.use(bodyParser.json({}));
 app.use(bodyParser.urlencoded({ extended: true }));
