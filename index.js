@@ -2,10 +2,6 @@ require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const bodyParser = require('body-parser');
-const usersRouter = require('./src/controllers/users');
-const loginRouter = require('./src/controllers/login');
-const verifyTokenRouter = require('./src/controllers/verifyToken');
-const verifyEmailRouter = require('./src/controllers/verifyEmail');
 const listsRouter = require('./src/controllers/lists');
 const app = express();
 
@@ -16,6 +12,11 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 const db = require('./src/db/db');
 db();
+
+const usersRouter = require('./src/controllers/users');
+const loginRouter = require('./src/controllers/login');
+const verifyTokenRouter = require('./src/controllers/verifyToken');
+const verifyEmailRouter = require('./src/controllers/verifyEmail');
 
 app.use('/api/users', usersRouter);
 app.use('/api/login', loginRouter);
