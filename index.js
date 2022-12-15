@@ -9,14 +9,7 @@ const verifyEmailRouter = require('./src/controllers/verifyEmail');
 const listsRouter = require('./src/controllers/lists');
 const app = express();
 
-app.use(cors());
-
-app.options("/tube/latestted", (req, res, next) => {
-  res.header('Access-Control-Allow-Origin', '*');
-  res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
-  res.header('Access-Control-Allow-Headers', 'Content-Type');        
-  res.sendStatus(200);
-});
+app.options('*', cors());
 
 app.use(bodyParser.json({}));
 app.use(bodyParser.urlencoded({ extended: true }));
