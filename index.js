@@ -14,8 +14,6 @@ const app = express();
 app.use(cors());
 app.options('*', cors());
 
-console.log('cors working?');
-
 app.use(bodyParser.json({}));
 app.use(bodyParser.urlencoded({ extended: true }));
 
